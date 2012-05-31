@@ -110,10 +110,14 @@
       (setq org-status-buffer t)
     (setq org-status-buffer nil)))
 
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TODO: This hook should be a buffer-local binding. That would be
+;; more effiicient and neater.
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 ;; If you wish, you can rewrite this `defhook' definition as a call to
-;; `add-hook'. Something like:
-;;          (add-hook 'write-file-functions
-;;              (when org-status-buffer (org-status-updates)))
+;; `add-hook'. Something like: (add-hook 'write-file-functions (when
+;; org-status-buffer (org-status-updates)))
 (defhook org-auto-status-updates (write-file-functions)
   "If local variable `org-status-buffer`, run `org-status-updates' on it."
   (when org-status-buffer
