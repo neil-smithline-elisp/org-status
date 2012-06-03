@@ -1,27 +1,25 @@
-;;; org-status.el --- 
-;; 
-;; Filename: org-status.el
-;; Description: 
+;;; org-status.el --- Tweet using `org-mode's capture functionality.
 ;; Author: Neil Smithline
 ;; Maintainer: 
-;; Copyright (C) 2012, Neil Smithline, all rights reserved.;; Created: Sun May 27 09:24:41 2012 (-0400)
-;; Version: 
+;; Copyright (C) 2012, Neil Smithline, all rights reserved.
+;; Created: Sun May 27 09:24:41 2012 (-0400)
+;; Version: 1.0-alpha1
 ;; Last-Updated: 
 ;;           By: 
 ;;     Update #: 0
-;; URL: 
-;; Keywords: 
-;; Compatibility: 
+;; URL: https://github.com/neil-smithline-elisp/org-status
+;; Keywords: org-mode, twitter, tweet
+;; Compatibility: Wherever org is.
 ;; 
 ;; Features that might be required by this library:
 ;;
-;;   None
+;;   defhook
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Commentary: 
 ;; 
-;; 
+;; Sorry but I'm tired. For now, see the README: http://bit.ly/MoGKYU
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
@@ -49,16 +47,11 @@
 ;; 
 ;;; Code:
 
+(require 'defhook)
+
 (defgroup org-status nil
   "Settings for `org-status-update' commands."
   :group 'org)
-
-(defcustom org-status-output-buffer "*Org Status Output*"
-  "Status buffer from `org-status-update' commands."
-  :type 'string
-  :safe t
-  :risky nil
-  :group 'org-status)
 
 (defcustom org-status-twitter-command "/usr/local/Cellar/ruby/1.9.3-p0/bin/t"
   "Full path to the installed `t' command on your system.
@@ -67,6 +60,13 @@ See https://github.com/sferik/t for instructions on installing `t'."
   :type '(file :must match t)
   :risky t
   :safe nil
+  :group 'org-status)
+
+(defcustom org-status-output-buffer "*Org Status Output*"
+  "Status buffer from `org-status-update' commands."
+  :type 'string
+  :safe t
+  :risky nil
   :group 'org-status)
 
 (defun org-status-tweet ()
