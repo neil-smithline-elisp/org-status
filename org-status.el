@@ -1,24 +1,25 @@
-;;; org-status.el --- Post tweets from Org Mode.
+;;; org-status.el --- 
 ;; 
+;; Filename: org-status.el
+;; Description: 
 ;; Author: Neil Smithline
-;; Maintainer: Neil Smithline
-;; Copyright (C) 2012, Neil Smithline, all rights reserved.
-;; Created: Sun May 27 09:24:41 2012 (-0400)
-;; Version: 1.0-pre1
+;; Maintainer: 
+;; Copyright (C) 2012, Neil Smithline, all rights reserved.;; Created: Sun May 27 09:24:41 2012 (-0400)
+;; Version: 
 ;; Last-Updated: 
 ;;           By: 
 ;;     Update #: 0
 ;; URL: 
-;; Keywords: org-mode, twitter, tweets
-;; Compatibility: Wherever Org Mode runs
+;; Keywords: 
+;; Compatibility: 
 ;; 
 ;; Features that might be required by this library:
 ;;
-;;   defhook, custom
+;;   None
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
-;;; Commentary: Post tweets from Org Mode.
+;;; Commentary: 
 ;; 
 ;; 
 ;; 
@@ -48,19 +49,25 @@
 ;; 
 ;;; Code:
 
+(defgroup org-status nil
+  "Settings for `org-status-update' commands."
+  :group 'org)
+
 (defcustom org-status-output-buffer "*Org Status Output*"
-  "Status buffer from `org-status-update' commands.")
+  "Status buffer from `org-status-update' commands."
+  :type 'string
+  :safe t
+  :risky nil
+  :group 'org-status)
 
-(defvar org-status-types '(tweet fb fbpage)
-  "List of status types.")
+(defcustom org-status-twitter-command "/usr/local/Cellar/ruby/1.9.3-p0/bin/t"
+  "Full path to the installed `t' command on your system.
 
-(defun org-status-get-status-function (type)
-  "Return the status update function for string TYPE."
-  (symbol-function (intern (concat "org-status-" type))))
-
-(defun org-status-get-status-search-tag (type)
-  "Return the search string to search for string TYPE."
-  (upcase type))))
+See https://github.com/sferik/t for instructions on installing `t'."
+  :type '(file :must match t)
+  :risky t
+  :safe nil
+  :group 'org-status)
 
 (defun org-status-tweet ()
   "Do a tweet for the current headline."
@@ -68,29 +75,33 @@
   (let* ((status-props      (org-agenda-get-some-entry-text
                              (point-marker) 9999))
          (status            (substring-no-properties status-props))
-         (headline          (buffer-substring (point)
-                                              (progn (end-of-line 1)
-                                                     (point)))))
+         (headline         (nth 4 (org-heading-components))))
+    (message "Tweeting %s . . ." headline)
     (assert (<= (length status) 140) t)
-    (let ((success (shell-command
-                    (format "t update '%s'" 
-                            (replace-regexp-in-string
-                             "\\([^\\]\\)'" "\\1\\\\'" status))
+    (get-buffer-create org-status-output-buffer)
+    (let ((success (shell-command 
+                    (format "%s update %s"
+                            org-status-twitter-command
+                            (shell-quote-argument status))
                     org-status-output-buffer
                     org-status-output-buffer))
-          (output            (save-excursion
-                               (set-buffer org-status-output-buffer)
-                               (buffer-substring-no-properties (point-min)
-                                                               (point-max)))))
+          (output (substring 
+                   (save-excursion
+                     (set-buffer org-status-output-buffer)
+                     (buffer-substring-no-properties (point-min)
+                                                     (point-max)))
+                   (1+ (length org-status-twitter-command)))))
       (if (zerop success)
           (progn
             (org-todo 'done)
             output)
-        (error "Status update (%s) failed with return value %s."
-               headline success)))))
+        ;; Remove trailing newline and period for error messages.
+        (let ((error-string (substring output 0 (- (length output) 2))))
+          (error "Error (%s): %s: `%s'"
+                 success error-string headline))))))
 
 (defun org-status-updates ()
-  "Loop through agenda files looking for status updates."
+  "Loop through entries looking for status updates."
   (interactive)
   (let ((results (org-map-entries #'org-status-tweet
                                         "TWEET+TODO=\"POST\"")))
@@ -99,8 +110,10 @@
       (set-buffer org-status-output-buffer)
       (print-elements-of-list results)))))
 
+(unless :COMMENT-on-hold 
+
 (defvar org-status-buffer nil
-  "Should `org-status-updates` be run when saving this buffer.")
+  "Non-nil if `org-status-updates` shoul be run when saving this buffer.")
 
 (make-variable-buffer-local 'org-status-buffer)
 (setq-default org-status-buffer nil)
@@ -110,18 +123,20 @@
       (setq org-status-buffer t)
     (setq org-status-buffer nil)))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; TODO: This hook should be a buffer-local binding. That would be
-;; more effiicient and neater.
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; If you wish, you can rewrite this `defhook' definition as a call to
-;; `add-hook'. Something like: (add-hook 'write-file-functions (when
-;; org-status-buffer (org-status-updates)))
 (defhook org-auto-status-updates (write-file-functions)
   "If local variable `org-status-buffer`, run `org-status-updates' on it."
   (when org-status-buffer
-    (org-status-updates)))
+    (org-status-updates))
+  nil)
+ )
+
+(defhook set-org-status-buffer (org-mode-hook)
+  (when (string-match "-status.org$" (or (buffer-file-name) ""))
+    (defhook org-auto-status-updates (write-file-functions :local t)
+      "If local variable `org-status-buffer`, run `org-status-updates' on it."
+      (when org-status-buffer
+        (org-status-updates))
+      nil)))
 
 (defun org-auto-status-updates-toggle (arg)
   "Toggle `org-status-buffer' in the local buffer.
@@ -137,10 +152,3 @@ negative, set to nil."
 (provide 'org-status)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; org-status.el ends here
-
-
-
-(org-set-tags-command)
-(org-set-property)
-
-info:org#Matching tags and properties (see URL `info:org#Matching%20tags%20and%20properties')

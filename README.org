@@ -1,0 +1,7 @@
+* Usage
+Add
+#+BEGIN_SRC emacs-lisp
+("s" "Status" entry (file+datetree "~/Documents/my-status.org") "* POST %^{Title } %U :TWEET:NS:
+%? %A
+" :prepend nil :empty-lines nil)
+#+END_SRC
