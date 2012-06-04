@@ -75,7 +75,7 @@ See https://github.com/sferik/t for instructions on installing `t'."
   (let* ((status-props      (org-agenda-get-some-entry-text
                              (point-marker) 9999))
          (status            (substring-no-properties status-props))
-         (headline         (nth 4 (org-heading-components))))
+         (headline          (nth 4 (org-heading-components))))
     (message "Tweeting %s . . ." headline)
     (assert (<= (length status) 140) t)
     (get-buffer-create org-status-output-buffer)
@@ -133,9 +133,8 @@ See https://github.com/sferik/t for instructions on installing `t'."
 (defhook set-org-status-buffer (org-mode-hook)
   (when (string-match "-status.org$" (or (buffer-file-name) ""))
     (defhook org-auto-status-updates (write-file-functions :local t)
-      "If local variable `org-status-buffer`, run `org-status-updates' on it."
-      (when org-status-buffer
-        (org-status-updates))
+      "Run `org-status-updates' before saving the current buffer."
+      (org-status-updates)
       nil)))
 
 (defun org-auto-status-updates-toggle (arg)

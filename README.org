@@ -24,8 +24,7 @@ This is the template that I use by adding it to =org-capture-templates=:
 #+BEGIN_SRC emacs-lisp
 ("s" "Status" 
      entry (file+datetree "~/Documents/my-status.org") 
-     "* POST %^{Title } %U :TWEET:\n%? %A\n" 
-     :prepend nil :empty-lines nil)
+     "* POST %^{Title } %U :TWEET:\n%? %A\n" :prepend nil :empty-lines nil)
 #+END_SRC
  
 In addition to adding extra data in the headings, it stores tweets in an =org-mode= =datetree=. Very handy.
