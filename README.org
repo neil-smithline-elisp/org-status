@@ -29,8 +29,6 @@ This is the template that I use by adding it to =org-capture-templates=:
  
 In addition to adding extra data in the headings, it stores tweets in an =org-mode= =datetree=. Very handy.
 
-Note: Do not nest one tweet within another. The results will be unpredictable and likely bad.
-
 * Tweeting
 Once you've authored one or more tweets, you publish them by saving the file that contains them. Because tweeting involves talking to Twitter's servers, saving the file can take several seconds for each tweet that must be published. 
 
@@ -45,11 +43,32 @@ While I'm certain there are many more possible errors, the only ones that I've s
 I encourage you to file bugs, questions, or suggestions on [[http://bit.ly/MoEKzO][org-status's issue page]]. No promises, but I'll do the best that I can. 
 
 * Futures
-Assuming I have the time, I would like to add more functionality to =org-status=. The top of my list of new features are
+Assuming I find the time and motivation, I would like to add more functionality to =org-status=. For the moment, the top of my list of new features are:
   - Add support for updating Facebook status.
   - Add support for updating Facebook Pages.
   - Add support for multiple Twitter accounts.
 
 Please feel free to vote for your favorites or ask for other features using [[http://bit.ly/MoEKzO][org-status's issue page]]. 
+
+I would also appreciate pointers to any other [[http://bit.ly/xOIkfJ][CLI]]s for social websites. My guess is that once I've added a second service to =org-status=, adding additional services will be easy.
+
+* Warnings
+*** Nested Tweets
+=org-mode= encourages and facilitates deeply nested outlines. I think that's great. But I would strongly recommend against making a tweet anything other than a [[http://bit.ly/Le35qB][leaf node]]. If you're lucky, =org-status= or =t= will fail on the submit because your tweet is too long. The remaining possibilities seem likely to involve the rushed deletion of tweets. Never a pretty sight.
+
+*** Twitterese, Not Org Mode
+While =org-status= allows you to author, edit, post, and archive your tweets from within =org-mode= your tweet should be [[http://bit.ly/Le42zn][plain text]] and not contain any [[http://bit.ly/Le40HH][org-mode markup]]. =org-mode='s automatic highlighting of URLs within your tweet is fine provided that they are just plain URLs.
+
+: This tweet will look weird on Twitter [http://bit.ly/Le5uBP].
+
+: And this one will look [[http://bit.ly/Le5Zvu][ever weirder]].
+
+: But this tweet will look great http://bit.ly/Le50M2
+
+*** Multiple-Line Tweets
+Being as I haven't tested for tweets that have [[http://bit.ly/Le6hm9][newlines]] in them, you should use them at your own risk. Auto-filling is fine but inserting newlines is not.
+
+* Miscellanea
+While not required for tweeting, you may find [[http://bit.ly/Le2Pbk][Emacs' bitly]] extension useful.
 
 # LocalWords:  datetree
